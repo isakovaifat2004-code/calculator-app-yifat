@@ -1,28 +1,33 @@
 pipeline {
-    agent any 
-    
+    agent any
+
     environment {
-        // כאן את שמה את ה-URI של ה-ECR שפתחת באמזון
-        ECR_REGISTRY = "123456789012.dkr.ecr.us-east-1.amazonaws.com/calculator-app"
+        // !!! תשני את המספר 123456789012 למספר החשבון שלך מאמזון !!!
+        ECR_URL = "123456789012.dkr.ecr.us-east-1.amazonaws.com/calculator-app"
+        REGION = "us-east-1"
     }
 
     stages {
-        stage('Build & Test') {
+        stage('Build Image') {
             steps {
-                echo 'Building and Testing...'
-                // כאן ג'נקינס בונה את הקונטיינר ומריץ בדיקות
-                sh "docker build -t calculator-test ."
+                script {
+                    echo "Building Docker Image..."
+                    // בניית האימג' מה-Dockerfile שהעלית
+                    sh "docker build -t calculator-app ."
+                }
             }
         }
 
         stage('Push to ECR') {
             steps {
                 script {
-                    // התחברות לאמזון (זה יעבוד כי שמנו Role לשרת)
-                    sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ECR_REGISTRY}"
-                    // דחיפה של האימג'
-                    sh "docker tag calculator-test ${ECR_REGISTRY}:latest"
-                    sh "docker push ${ECR_REGISTRY}:latest"
+                    echo "Pushing to ECR..."
+                    // התחברות לאמזון (עובד בזכות ה-Role שנתנו ל-EC2)
+                    sh "aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ECR_URL}"
+                    
+                    // תיוג ודחיפה
+                    sh "docker tag calculator-app:latest ${ECR_URL}:latest"
+                    sh "docker push ${ECR_URL}:latest"
                 }
             }
         }
