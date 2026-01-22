@@ -15,3 +15,4 @@ python api.py
 curl -fsS http://localhost:5000/health
 ```
 Final check - Automation works!
+Verified by yifay - pipeline is fully automated!
