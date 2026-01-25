@@ -5,7 +5,7 @@ pipeline {
         REGION = "us-east-1"
         IMAGE_NAME = "calculator-app-yifat" // השם מה-ECR שלך
         ECR_URL = "${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${IMAGE_NAME}"
-        PROD_SERVER_IP = "ה-IP-של-השרת-פרודקשן-החדש-שלך"
+        PROD_SERVER_IP = "44.204.53.88"
     }
     stages {
         stage('Test') {
